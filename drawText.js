@@ -504,14 +504,16 @@ function chooseRecordingFunction(){
         startMobileRecording();
     }else {
         recordVideoMuxer();
+        //startMobileRecording();
     }
 }
 
 function chooseEndRecordingFunction(){
     if(isIOS || isAndroid || isFirefox){
-        finalizeMobileVideo();
+        finalizeMobileVideo(mobileRecorder);
     }else {
         finalizeVideo();
+        //finalizeMobileVideo(mobileRecorder);
     }  
 }
 
