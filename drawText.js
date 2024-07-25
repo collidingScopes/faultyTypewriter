@@ -1,8 +1,6 @@
 /* To do list:
 Pause/play animation button?
-Set starting canvas width / height based on user device dimensions
-Toggle for transparent background / gradient / image background
-Toggle for whole word break instead of letter break?
+Allow video background. Need to draw video behind the canvas and then mux??
 User control for where to start the first letter -- X/Y padding
 Randomize inputs function
 Gif export
@@ -12,11 +10,9 @@ site OG properties
 About section / link section
 Better formatting for text input (larger and more visible)
 Better hotkey method (user will be typing alot)
-Set default font size at startup, depending on screen size
-Name: faulty typewriter
-Fix mobile record function (conform to the standard muxer function)
 Movie posters / famous quotes -- Blade Runner, wong kar wai, etc.
 Organize options in basic options / funky options -- auto-hide funky options
+Button to choose lock aspect ratio when changing canvas dimensions
 */
 
 var animation = document.getElementById("animation");
@@ -33,7 +29,7 @@ var animationfps=45;
 var animationInterval;
 var playAnimationToggle = false;
 var xPadding = 20; //padding from the origin point, in pixels
-var yPadding = 5;
+var yPadding = 8;
 
 var textInput = document.getElementById("textInput");
 textInput.addEventListener("change",refresh);
@@ -94,11 +90,6 @@ var randomRotation;
 var fillCheckbox = document.getElementById('fillCheckbox');
 fillCheckbox.addEventListener('click', refresh);
 var fillLetterToggle = false;
-
-/*
-var drawButton = document.getElementById("drawButton");
-drawButton.addEventListener("click",refresh);
-*/
 
 var initialXOffset = xPadding;
 var x;
@@ -163,9 +154,7 @@ var recordVideoState = false;
 var videoRecordInterval;
 var videoEncoder;
 var muxer;
-
 var mobileRecorder;
-
 var videofps = 15;
 
 /*
@@ -266,13 +255,15 @@ function refresh(){
 }
 
 //MAIN METHOD
-canvasWidthInput.value = window.innerWidth;
-canvasHeightInput.value = window.innerHeight/2;
+canvasWidthInput.value = Math.floor(window.innerWidth);
+canvasHeightInput.value = Math.floor(window.innerHeight/2);
+fontSizeInput.value = Math.floor(Math.min(100,window.innerWidth/12));
 setTimeout(getUserInputs,200);
 setTimeout(drawText,1800); //wait for fonts to load
 
 function drawText(){
 
+    //clear any animation if one was running before
     if(playAnimationToggle == true){
         clearInterval(animationInterval);
         playAnimationToggle = false;
@@ -293,7 +284,8 @@ function drawText(){
     var middleYPosition = initialYOffset;
 
     animationInterval = setInterval(loop,1000/animationfps); //start loop
-        
+    var currentWordWidth = 0;
+
     function loop(){
         
         if(!playAnimationToggle){
@@ -307,7 +299,7 @@ function drawText(){
         y = middleYPosition + sineShift;
 
         //create line break and tweak color if next char will spill over the right or top
-        if((x + chWidth) > canvasWidth || (y-textHeight) < 0){
+        if((x + currentWordWidth) > canvasWidth || (y-textHeight/2) < 0){
             x = initialXOffset;
             rowCounter++;
             middleYPosition = (textHeight+ctx.lineWidth)*1.1*rowCounter + yPadding;
@@ -341,6 +333,26 @@ function drawText(){
           } else {
             dashOffset = dashLen;   // prep next char
           }
+
+          var charCounter = 0;
+          //find width of current word
+          for(var j=i; j<text.length; j++){
+              
+              if(text[j] == ' '){
+                  break;
+              } else {
+                charCounter++;
+              }
+          }
+          //console.log("char count: "+charCounter);
+          currentWordWidth = 0;
+          for(var z=0; z<charCounter; z++){
+            var currentCh = text[i+z];
+            currentWordWidth += ctx.measureText(currentCh).width;
+          }
+          if(currentWordWidth>=canvasWidth){
+            currentWordWidth=0; //allow very large words to pass the break
+          }
           
           //stop animation
           if (i >= text.length || y > (canvasHeight*1.1)){
@@ -350,7 +362,7 @@ function drawText(){
 
             if(recordVideoState == true){
                 console.log("stop video record");
-                setTimeout(chooseEndRecordingFunction,5000);
+                setTimeout(chooseEndRecordingFunction,4000);
             }
           }
 
@@ -457,7 +469,7 @@ function saveImage(){
 
 function tweakCanvasColor(){
     var currentHex = ctx.fillStyle;
-    console.log("current color: "+currentHex);
+    //console.log("current color: "+currentHex);
     var currentRGB = hexToRgb(currentHex);
     var newR = currentRGB.r - colorRange/2 + Math.random()*colorRange;
     var newG = currentRGB.g - colorRange/2 + Math.random()*colorRange;
@@ -466,7 +478,7 @@ function tweakCanvasColor(){
     var newHex = rgbToHex(newR, newG, newB);
     ctx.fillStyle = newHex;
     ctx.strokeStyle = newHex;
-    console.log("new color: "+newHex);
+    //console.log("new color: "+newHex);
 
 }
 
@@ -500,6 +512,7 @@ document.addEventListener('keydown', function(event) {
 
 
 function chooseRecordingFunction(){
+    animation.scrollIntoView({ behavior: "smooth" });
     if(isIOS || isAndroid || isFirefox){
         startMobileRecording();
     }else {
@@ -703,23 +716,14 @@ async function finalizeVideo(){
     
 }
 
-function recordingMessageCountdown(duration){
-
-    /*
-    var secondsLeft = Math.ceil(duration);
-
-    var countdownInterval = setInterval(function(){
-        secondsLeft--;
-        recordingMessageDiv.innerHTML = 
-        "Video recording underway. The video will be saved to your downloads folder in <span id=\"secondsLeft\">"+secondsLeft+"</span> seconds.<br><br>This feature can be a bit buggy on Mobile -- if it doesn't work, please try on Desktop instead.";  
-        
-        if(secondsLeft <= 0){
-            console.log("clear countdown interval");
-            clearInterval(countdownInterval);
+function recordWhitespaces(text){
+    var whitespacePositions = []
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] === ' ') {
+            whitespacePositions.push(i);
         }
-    },1000);
-    */
-    
+    }
+    return whitespacePositions;
 }
 
 /*

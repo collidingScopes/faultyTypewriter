@@ -46,18 +46,7 @@
                 <tr>
                     <td colspan="4">
                         <!--<pre><span class="tableText">Enter Text</span><br><input type="textarea" id="textInput" class="input-number-noSpinners" value="Hello world!"/></pre> -->
-                        <pre><span class="tableText">Enter Text</span><br><textarea id="textInput" class="input-number-noSpinners" rows="3" cols="70">
-air and light and time and space
-"–you know, I’ve either had a family, a job,
-something has always been in the
-way
-but now
-I’ve sold my house, I’ve found this
-place, a large studio, you should see the space and
-the light.
-for the first time in my life I’m going to have
-a place and the time to
-create."</textarea></pre>
+                        <textarea id="textInput" class="input-number-noSpinners" rows="3">Write what you know, and what do you know better than your own secrets?</textarea>
                     </td>
                 </tr>
                 <tr>
@@ -77,7 +66,7 @@ create."</textarea></pre>
                           </select></pre>
                     </td>
                     <td>
-                        <pre><span class="tableText">Font Size</span><br><input class="input-number-noSpinners" type="range" id="fontSizeInput" value="75" min="15" max="150"></pre>
+                        <pre><span class="tableText">Font Size</span><br><input class="input-number-noSpinners" type="range" id="fontSizeInput" value="75" min="15" max="200"></pre>
                     </td>
                     <td>
                         <pre><span class="tableText">Text Color</span><br><input type="color" id="colorInput" value="#FFD95C"/></pre>
@@ -88,7 +77,7 @@ create."</textarea></pre>
                         <pre><span class="tableText">Background Type</span><br><select id="backgroundChoiceInput">
                             <option value="solid">Solid Color</option>
                             <option value="transparent">Transparent</option>
-                            <option value="image">Image</option>
+                            <option value="image" selected="selected">Image</option>
                             <option value="video">Video</option>
                           </select></pre>
                     </td>
@@ -110,13 +99,13 @@ create."</textarea></pre>
                 </tr>
                 <tr>
                     <td>
-                        <pre><span class="tableText">Animation Speed</span><br><input class="input-number-noSpinners" type="range" id="speedInput" value="8" min="1" max="35"></pre>
+                        <pre><span class="tableText">Animation Speed</span><br><input class="input-number-noSpinners" type="range" id="speedInput" value="18" min="1" max="50"></pre>
                     </td>
                     <td>
-                        <pre><span class="tableText">Waviness</span><br><input class="input-number-noSpinners" type="range" id="wavyInput" value="20" min="0" max="100"></pre>
+                        <pre><span class="tableText">Waviness</span><br><input class="input-number-noSpinners" type="range" id="wavyInput" value="25" min="0" max="100"></pre>
                     </td>
                     <td>
-                        <pre><span class="tableText">Color Range</span><br><input class="input-number-noSpinners" type="range" id="colorRangeInput" value="20" min="0" max="100"></pre>
+                        <pre><span class="tableText">Color Range</span><br><input class="input-number-noSpinners" type="range" id="colorRangeInput" value="40" min="0" max="100"></pre>
                     </td>
                 </tr>
                 <tr>
@@ -167,16 +156,28 @@ create."</textarea></pre>
 
         </div>
         
-        <div id="notesDiv" class="hidden">
-            <div id="textBox" class="hidden">
-                <h2 id="aboutText" class="hidden">About</h2>
+        <div id="notesDiv">
+            <div id="textBox">
+
+                <h2 id="aboutText">Faulty Typewriter</h2>
+                <p>Create text animations! Type some text, then drag the sliders to adjust the font, speed, colors, waviness, randomness, etc...</p>
+                <p>You can also upload your own background image to create animated posters.</p>
+                <p>Press the 'enter' key to re-draw the animation from scratch.</p>
+                <p>This tool is completely free, open source, without any paywalls or premium options. You are welcome to use it for personal or commercial purposes.</p>
+                <p>If you found this tool useful, feel free to buy me a coffee. This would be much appreciated during late-night coding sessions!</p>
+                
+                <a href="https://www.buymeacoffee.com/stereoDrift" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee"></a>
+
+                <p>This project is coded using Javascript, HTML, and CSS (see github repo linked below). Video creation and encoding is done using mp4 muxer.</p>
+                <p>I do not have access to any of the images that you upload here, as all processing is done "client-side" (i.e., <b>no text or images are saved/stored by me — they stay on your computer only</b>).</p>
+                <p>Feel free to reach out to discuss, ask questions, or to share your creations! The animations can be easily uploaded to instagram or otherwise -- you can tag me <a href="https://www.instagram.com/stereo.drift/" target="_blank" rel="noopener">@stereo.drift</a></p>
             </div>
         </div>
 
-        <div id="linksDiv" class="hidden">
-            <table id="infoMenuTable" class="hidden">
+        <div id="linksDiv">
+            <table id="infoMenuTable">
                 <tr>
-                    <td><button id="gitHubButton"class="socialMediaButton"><a href="https://github.com/collidingScopes/shimmer" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></button></td>
+                    <td><button id="gitHubButton"class="socialMediaButton"><a href="https://github.com/collidingScopes/faultyTypewriter" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></button></td>
                     <td><button id="coffeeButton" class="socialMediaButton"><a href="https://www.buymeacoffee.com/stereoDrift" target="_blank" rel="noopener"><i class="fa-solid fa-heart"></i></a></button></td>
                     <td><button id="instagramButton" class="socialMediaButton"><a href="https://www.instagram.com/stereo.drift/" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a></button></td>
                     <td><button id="emailButton" class="socialMediaButton"><a href="mailto:stereodriftvisuals@gmail.com" target="_blank" rel="noopener"><i class="fa-solid fa-envelope"></i></a></button></td>

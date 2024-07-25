@@ -8,40 +8,13 @@ html, body{
     position: absolute;
 }
 
-/*
-canvas{
-    margin-top: 10px;
-    margin-bottom: 10px;
-}*/
-
-/*
-#wrapper {
-    position: absolute;
-    display: block;
-}
-
-
-#video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
-}
-  
-#animation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}*/
-
 #introDiv{
     width: 100vw;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 
-    background-color: #581845;
+    background-color: #2D0A3D;
     padding-top: 2px;
     padding-bottom: 10px;
     text-align: center;
@@ -50,7 +23,7 @@ canvas{
 
 #siteNameText{
     font-size: 42px;
-    font-family: "Righteous", sans-serif;
+    font-family: "Permanent Marker";
     font-weight: 400;
     font-style: normal;
     display:block;
@@ -58,7 +31,7 @@ canvas{
 
 #subtitleText{
     font-size: 24px;
-    font-family: "Righteous", sans-serif;
+    font-family: "Permanent Marker";
     font-weight: 400;
     font-style: normal;
     font-style: italic;
@@ -67,7 +40,7 @@ canvas{
 
 #aboutText{
     font-size: 32px;
-    font-family: "Righteous", sans-serif;
+    font-family: "Permanent Marker";
     font-weight: 400;
     font-style: normal;
     display:block;
@@ -82,7 +55,7 @@ canvas{
     background-color: white;
     text-align: center;
     justify-content: center;
-    background-color: #150e29;
+    background-color: #2D0A3D;
 
 }
 
@@ -94,7 +67,9 @@ canvas{
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: 5px solid #581845;
+    /*border-top: 5px solid #581845;*/
+    background-color: #17193e;
+    color: white;
 }
 
 #textBox {
@@ -112,15 +87,6 @@ li {
     justify-content: center;
     align-items: center;
 }
-
-/*
-button, input {
-    font-size: 20px;
-    font-family: Helvetica;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-*/
 
 h2 {
     font-size: 40px;
@@ -235,6 +201,11 @@ input[type="range"] {
     max-width:30vw;
 }
 
+input[type="checkbox"] {
+    min-width: 20px;
+    min-height: 20px;
+}
+
 button {
     padding: 6px;
     font-weight: bold;
@@ -303,11 +274,15 @@ td {
     */
     width:100vw;
     /*background-color: rgb(228, 218, 255);*/
-    background-color: #240e29;
+    background-color: #2D0A3D;
 }
 
 #textInput{
     width: 90% !important;
+    border: 4px solid rgb(161, 50, 154);
+    font-size: 1.1em;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 /* applies when screen is wide enough */ 
@@ -375,8 +350,12 @@ td {
     margin: 0px;
 }
 
+a, a:visited{
+    color:rgb(161, 50, 154);
+}
+
 .socialMediaButton{
-    color:rgb(55, 60, 133);
+    color:rgb(161, 50, 154);
     font-size: 26px;
     margin: 0;
     padding: 4px;
