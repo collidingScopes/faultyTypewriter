@@ -306,7 +306,7 @@ function drawText(){
         y = middleYPosition + sineShift;
 
         //create line break and tweak color if next char will spill over the right or top
-        if(x + chWidth > canvasWidth || y < 0){
+        if((x + chWidth) > canvasWidth || (y-textHeight) < 0){
             x = initialXOffset;
             rowCounter++;
             middleYPosition = (textHeight+ctx.lineWidth)*1.1*rowCounter + yPadding;
@@ -656,7 +656,8 @@ function startMobileRecording(){
     //recordingMessageCountdown(videoDuration);
     recordingMessageDiv.classList.remove("hidden");
     
-    mobileRecorder.start();
+    refresh(); //start animation
+    mobileRecorder.start(); //start mobile video recording
 
     /*
     setTimeout(function() {
