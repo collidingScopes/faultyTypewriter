@@ -510,7 +510,7 @@ function chooseRecordingFunction(){
 
 function chooseEndRecordingFunction(){
     if(isIOS || isAndroid || isFirefox){
-        finalizeMobileVideo(mobileRecorder);
+        mobileRecorder.stop();
     }else {
         finalizeVideo();
         //finalizeMobileVideo(mobileRecorder);
@@ -637,7 +637,7 @@ function downloadBlob() {
     a.style.display = "none";
     a.href = url;
     const date = new Date();
-    const filename = `typwriter_${date.toLocaleDateString()}_${date.toLocaleTimeString()}.mp4`;
+    const filename = `typewriter_${date.toLocaleDateString()}_${date.toLocaleTimeString()}.mp4`;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
@@ -648,12 +648,11 @@ function downloadBlob() {
 function startMobileRecording(){
     var stream = animation.captureStream(videofps);
     mobileRecorder = new MediaRecorder(stream, { 'type': 'video/mp4' });
-    //mobileRecorder.addEventListener('dataavailable', finishMobileRecording);
+    mobileRecorder.addEventListener('dataavailable', finalizeMobileVideo);
 
     console.log("start simple video recording");
     console.log("Video dimensions: "+animation.width+", "+animation.height);
 
-    
     //display user message
     //recordingMessageCountdown(videoDuration);
     recordingMessageDiv.classList.remove("hidden");
@@ -673,7 +672,8 @@ function finalizeMobileVideo(e) {
     setTimeout(function(){
         console.log("finish simple video recording");
         recordVideoState = false;
-        mobileRecorder.stop();
+        /*
+        mobileRecorder.stop();*/
         var videoData = [ e.data ];
         finishedBlob = new Blob(videoData, { 'type': 'video/mp4' });
         downloadBlob(finishedBlob);
