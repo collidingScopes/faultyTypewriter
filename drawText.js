@@ -16,6 +16,7 @@ Set default font size at startup, depending on screen size
 Name: faulty typewriter
 Fix mobile record function (conform to the standard muxer function)
 Movie posters / famous quotes -- Blade Runner, wong kar wai, etc.
+Organize options in basic options / funky options -- auto-hide funky options
 */
 
 var animation = document.getElementById("animation");
@@ -568,7 +569,7 @@ async function recordVideoMuxer() {
     //NEW codec: "avc1.42003e",
     //ORIGINAL codec: "avc1.42001f",
 
-    recordVideoState = true;
+    //recordVideoState = true;
     var frameNumber = 0;
     //setTimeout(finalizeVideo,1000*videoDuration+200); //finish and export video after x seconds
     
@@ -643,7 +644,6 @@ function downloadBlob() {
 
 //record and download videos on mobile devices
 function startMobileRecording(){
-    
     var stream = animation.captureStream(videofps);
     mobileRecorder = new MediaRecorder(stream, { 'type': 'video/mp4' });
     //mobileRecorder.addEventListener('dataavailable', finishMobileRecording);
@@ -656,6 +656,7 @@ function startMobileRecording(){
     //recordingMessageCountdown(videoDuration);
     recordingMessageDiv.classList.remove("hidden");
     
+    recordVideoState = true;
     refresh(); //start animation
     mobileRecorder.start(); //start mobile video recording
 
@@ -669,6 +670,7 @@ function startMobileRecording(){
 function finalizeMobileVideo(e) {
     setTimeout(function(){
         console.log("finish simple video recording");
+        recordVideoState = false;
         mobileRecorder.stop();
         var videoData = [ e.data ];
         finishedBlob = new Blob(videoData, { 'type': 'video/mp4' });
