@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <!-- Google fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+        
+        <!-- Font awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!--
+        <meta property="og:title" content="Shape Shimmer - wave animator" />
+        <meta property="og:description" content="Turn photos into funky wave animations" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://collidingscopes.github.io/shimmer" />
+        <meta property="og:image" content="https://collidingscopes.github.io/shimmer/images/replicant.png">
+        <meta property="og:image:type" content="image/png" >
+        <meta property="og:image:width" content="1000" >
+        <meta property="og:image:height" content="1005" >
+
+        <link rel="icon" href="images/siteFavicon3.png">
+        <link rel="apple-touch-icon" href="images/siteFavicon3.png">
+        -->
+
+    </head>
+    <body>
+
+        <div id="coverScreen" class="hidden">
+        </div>
+
+        <div id="introDiv" class="hidden">
+        </div>
+        
+        <div id="toolDiv">
+
+            <canvas id="animation"></canvas>
+
+            <table id="inputTable">
+                <tr>
+                    <td colspan="4">
+                        <!--<pre><span class="tableText">Enter Text</span><br><input type="textarea" id="textInput" class="input-number-noSpinners" value="Hello world!"/></pre> -->
+                        <pre><span class="tableText">Enter Text</span><br><textarea id="textInput" class="input-number-noSpinners" rows="3" cols="70">
+air and light and time and space
+"–you know, I’ve either had a family, a job,
+something has always been in the
+way
+but now
+I’ve sold my house, I’ve found this
+place, a large studio, you should see the space and
+the light.
+for the first time in my life I’m going to have
+a place and the time to
+create."</textarea></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre><span class="tableText">Font</span><br><select id="fontInput">
+                            <option value="Arial">Arial</option>
+                            <option value="Calibri">Calibri</option>
+                            <option value="Comic Sans MS">Comic Sans MS</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Garamond">Garamond</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Lucida Sans">Lucida Sans</option>
+                            <option value="Permanent Marker" selected="selected">Permanent Marker</option>
+                            <option value="Righteous">Righteous</option>
+                            <option value="Satisfy">Satisfy</option>
+                          </select></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Font Size</span><br><input class="input-number-noSpinners" type="range" id="fontSizeInput" value="75" min="15" max="150"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Text Color</span><br><input type="color" id="colorInput" value="#FFD95C"/></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre><span class="tableText">Background Type</span><br><select id="backgroundChoiceInput">
+                            <option value="solid">Solid Color</option>
+                            <option value="transparent">Transparent</option>
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                          </select></pre>
+                    </td>
+                    <td id="backgroundColorInputCell" class="hidden">
+                        <pre><span class="tableText">Background Color</span><br><input type="color" id="backgroundColorInput" value="#150e29"/></pre>
+                    </td>
+                    <td id="imageInputCell" class="hidden">
+                        <label for="imageFileInput" class="custom-file-upload">
+                            <i class="fa fa-cloud-upload"></i> Select image
+                        </label>
+                        <input type="file" id="imageFileInput" accept="image/*">
+                    </td>
+                    <td id="videoInputCell" class="hidden">
+                        <label for="videoFileInput" class="custom-file-upload">
+                            <i class="fa fa-cloud-upload"></i> Select video
+                        </label>
+                        <input type="file" id="videoFileInput" accept="video/*">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre><span class="tableText">Animation Speed</span><br><input class="input-number-noSpinners" type="range" id="speedInput" value="8" min="1" max="35"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Waviness</span><br><input class="input-number-noSpinners" type="range" id="wavyInput" value="20" min="0" max="100"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Color Range</span><br><input class="input-number-noSpinners" type="range" id="colorRangeInput" value="20" min="0" max="100"></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre><span class="tableText">Line Width</span><br><input class="input-number-noSpinners" type="range" id="lineWidthInput" value="2" min="1" max="10"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Opacity</span><br><input class="input-number-noSpinners" type="range" id="opacityInput" value="100" min="10" max="100"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Fill Letters?</span><br><input type="checkbox" id="fillCheckbox" name="checkbox"></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre><span class="tableText">Random X Movement</span><br><input class="input-number-noSpinners" type="range" id="randomXDeltaInput" value="2" min="0" max="20"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Random Y Movement</span><br><input class="input-number-noSpinners" type="range" id="randomYDeltaInput" value="3" min="0" max="100"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Random Rotation</span><br><input class="input-number-noSpinners" type="range" id="randomRotationInput" value="3" min="0" max="100"></pre>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre><span class="tableText">Canvas Width (px)</span><br><input class="input-number-noSpinners" type="number" id="canvasWidthInput" value="800" min="1" max="3000"></pre>
+                    </td>
+                    <td>
+                        <pre><span class="tableText">Canvas Height (px)</span><br><input class="input-number-noSpinners" type="number" id="canvasHeightInput" value="400" min="1" max="3000"></pre>
+                    </td>
+                </tr>
+
+            </table>
+
+            <button id="saveImageButton">Export Image</button>
+            <button id="recordVideoButton">Export Video</button>
+
+            <div id="videoRecordingMessageDiv" class="hidden sticky-bottom">
+                Video recording underway. The video will be saved to your downloads folder once the text animation finishes.<br><br>This feature can be a bit buggy on Mobile -- if it doesn't work, please try on Desktop instead.
+            </div>
+
+            <div id="imageContainer" class="hidden">
+                <img id="originalImg" src="images/NoisyGradient.png">
+            </div>
+
+            <video id="video" loop class="hidden"></video>
+
+        </div>
+        
+        <div id="notesDiv" class="hidden">
+            <div id="textBox" class="hidden">
+                <h2 id="aboutText" class="hidden">About</h2>
+            </div>
+        </div>
+
+        <div id="linksDiv" class="hidden">
+            <table id="infoMenuTable" class="hidden">
+                <tr>
+                    <td><button id="gitHubButton"class="socialMediaButton"><a href="https://github.com/collidingScopes/shimmer" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a></button></td>
+                    <td><button id="coffeeButton" class="socialMediaButton"><a href="https://www.buymeacoffee.com/stereoDrift" target="_blank" rel="noopener"><i class="fa-solid fa-heart"></i></a></button></td>
+                    <td><button id="instagramButton" class="socialMediaButton"><a href="https://www.instagram.com/stereo.drift/" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a></button></td>
+                    <td><button id="emailButton" class="socialMediaButton"><a href="mailto:stereodriftvisuals@gmail.com" target="_blank" rel="noopener"><i class="fa-solid fa-envelope"></i></a></button></td>
+                </tr>
+            </table>
+        </div>
+
+    </body>
+    
+    <script src="drawText.js"></script>
+    <script src="mp4-muxer-main/build/mp4-muxer.js"></script>
+
+</html>
