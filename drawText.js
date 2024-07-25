@@ -7,7 +7,7 @@ Gif export
 Add other fonts from google fonts
 Font for different languages?
 site OG properties
-About section / link section
+README / Github descriptio
 Better formatting for text input (larger and more visible)
 Better hotkey method (user will be typing alot)
 Movie posters / famous quotes -- Blade Runner, wong kar wai, etc.
