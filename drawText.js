@@ -1,21 +1,26 @@
 /* To do list:
 Pause/play animation button?
 Allow video background. Need to draw video behind the canvas and then mux??
-User control for where to start the first letter -- X/Y padding
 Randomize inputs function
 Gif export
 Add other fonts from google fonts
 Font for different languages?
 site OG properties
-README / Github descriptio
-Better formatting for text input (larger and more visible)
 Better hotkey method (user will be typing alot)
 Movie posters / famous quotes -- Blade Runner, wong kar wai, etc.
 Organize options in basic options / funky options -- auto-hide funky options
 Button to choose lock aspect ratio when changing canvas dimensions
+Reduce file size of background image (doesn't load sometimes)
+Force stroke to finish even on high speed?
+Add example text (short / long quotes), and some example outputs
+Can background be a generative animation? This would require a background canvas/foreground?
+Mobile issues:
+- input table too wide (shrink input image button)
+- text area doesn't update after clicking 'done', need to hit return
 */
 
 var animation = document.getElementById("animation");
+animation.addEventListener("click",refresh);
 
 var canvasWidthInput = document.getElementById("canvasWidthInput");
 canvasWidthInput.addEventListener("change",refresh);
@@ -28,8 +33,14 @@ var canvasHeight;
 var animationfps=45;
 var animationInterval;
 var playAnimationToggle = false;
-var xPadding = 20; //padding from the origin point, in pixels
-var yPadding = 8;
+
+var xPaddingInput = document.getElementById("xPaddingInput");
+xPaddingInput.addEventListener("change",refresh);
+var xPadding;
+
+var yPaddingInput = document.getElementById("yPaddingInput");
+yPaddingInput.addEventListener("change",refresh);
+var yPadding;
 
 var textInput = document.getElementById("textInput");
 textInput.addEventListener("change",refresh);
@@ -91,9 +102,7 @@ var fillCheckbox = document.getElementById('fillCheckbox');
 fillCheckbox.addEventListener('click', refresh);
 var fillLetterToggle = false;
 
-var initialXOffset = xPadding;
 var x;
-var initialYOffset = yPadding;
 var y;
 var initialDashLen;
 
@@ -157,6 +166,11 @@ var muxer;
 var mobileRecorder;
 var videofps = 15;
 
+//user input text metrics;
+var numWords;
+var wordLengthArray = [];
+var wordStartPositionArray = [];
+
 /*
 //randomize inputs button
 var randomizeButton = document.getElementById("randomizeButton");
@@ -172,7 +186,9 @@ function getUserInputs(){
     animation.height = canvasHeight;
     
     text = String(textInput.value);
-    console.log("User text: "+text);
+    text = cleanText(text);
+    console.log("Cleaned user text: "+text);
+    getTextMetrics(text);
 
     color = String(colorInput.value);
     
@@ -219,6 +235,9 @@ function getUserInputs(){
     ctx.lineWidth = lineWidth;
     opacity = Number(opacityInput.value);
     ctx.globalAlpha = opacity/100;
+
+    xPadding = Math.round(Number(xPaddingInput.value)/100*canvasWidth);
+    yPadding = Math.round(Number(yPaddingInput.value)/100*canvasHeight);
 
     font = String(fontInput.value);
     fontSize = Number(fontSizeInput.value)
@@ -270,7 +289,7 @@ function drawText(){
     }
 
     playAnimationToggle = true;
-    dashLen = initialDashLen, dashOffset = dashLen, x = initialXOffset, i = 0;
+    dashLen = initialDashLen, dashOffset = dashLen, x = xPadding, i = 0;
 
     let metrics = ctx.measureText(text);
     let textHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
@@ -278,13 +297,17 @@ function drawText(){
     var textWidth = metrics.width;
     console.log("textWidth: "+textWidth+", textHeight: "+textHeight);
 
-    initialYOffset = textHeight+yPadding;
-    y = initialYOffset;
+    y = textHeight+yPadding;
     var rowCounter=1;
-    var middleYPosition = initialYOffset;
+    var middleYPosition = y;
 
     animationInterval = setInterval(loop,1000/animationfps); //start loop
     var currentWordWidth = 0;
+    var currentWordCounter = 0;
+    var currentWordCharLength = 0;
+    var currentWordWidth = 0;
+    var lineBreakFlag = false;
+    var lineBreakThreshold = 0.98;
 
     function loop(){
         
@@ -295,76 +318,113 @@ function drawText(){
         var ch = text[i];
         var chWidth = ctx.measureText(ch).width;
 
+        //calculate if the next word should start on a new line
+        if(dashOffset == dashLen){
+            //console.log("current char number: "+i);
+            lineBreakFlag = false;
+            if(wordStartPositionArray.indexOf(i) >= 0){
+                //this char is the start of a word
+                currentWordWidth = 0;
+                currentWordCounter++;
+                currentWordCharLength = wordLengthArray[currentWordCounter-1];
+                //console.log("start of word, with char length of "+currentWordCharLength);
+                
+                for(var z=0; z<currentWordCharLength; z++){
+                    currentWordWidth += ctx.measureText(text[i+z]).width;
+                }
+                //console.log("current word width: "+currentWordWidth);
+
+                if(currentWordWidth > canvasWidth){
+                    lineBreakFlag = false; //let really long words pass as they break any line
+                } else {
+                    if(x+currentWordWidth > (canvasWidth*lineBreakThreshold)){
+                        lineBreakFlag = true; //create line break if word spills over the right edge
+                    }
+                }
+            }
+        }
+
+        //create line break and tweak color if next char will spill over the right or top
+        if(lineBreakFlag == true || x+chWidth>(canvasWidth*lineBreakThreshold) || (y-textHeight/2) < 0){
+            x = canvasWidth*0.02; //initial xposition of new line -- can be tweaked
+            rowCounter++;
+            middleYPosition = (textHeight+ctx.lineWidth)*1.05*rowCounter + yPadding;
+            tweakCanvasColor();
+            lineBreakFlag = false; //do not do two line breaks in a row
+        }
+
         var sineShift = Math.sin((x/canvasWidth)*Math.PI*2) * wavyFactor;
         y = middleYPosition + sineShift;
 
-        //create line break and tweak color if next char will spill over the right or top
-        if((x + currentWordWidth) > canvasWidth || (y-textHeight/2) < 0){
-            x = initialXOffset;
-            rowCounter++;
-            middleYPosition = (textHeight+ctx.lineWidth)*1.1*rowCounter + yPadding;
-            tweakCanvasColor();
-            //y += (textHeight+ctx.lineWidth)*1.1;
-        }
-
+        //draw stroke line of current character
         ctx.setLineDash([dashLen - dashOffset, dashOffset - speed]); // create a long dash mask
-        dashOffset -= speed;                                       // reduce dash length
-        ctx.strokeText(ch, x, y);                 // stroke letter
-
-        if (dashOffset <= 0){ //once letter stroke is finished
-
-          if(fillLetterToggle){
-            ctx.fillText(ch, x, y);    // fill final letter
+        if(dashOffset > 1 && dashOffset-speed <=0){
+            speed = dashOffset; //force stroke to finish if overshoot would happen
         }
-          var posOrNeg;
-          if(Math.random()<0.5){
-            posOrNeg = -1;
-          }else{
-            posOrNeg = 1;
-          }
-          x += chWidth + ctx.lineWidth + (randomXDelta * Math.random())*posOrNeg; //random x-delta
-          i++;
-          ch = text[i];
-          ctx.setTransform(1, 0, 0, 1, 0, Math.random() * randomYDelta);        // random y-delta
-          ctx.rotate(Math.random() * randomRotation);                         // random rotation
-          
-          if((ch == ' ') || (ch == '\t') || (ch == '\n')){
-            dashOffset = dashLen/2;   //small pause if whitespace
-          } else {
-            dashOffset = dashLen;   // prep next char
-          }
+        dashOffset -= speed; // reduce dash length
 
-          var charCounter = 0;
-          //find width of current word
-          for(var j=i; j<text.length; j++){
-              
-              if(text[j] == ' '){
-                  break;
-              } else {
-                charCounter++;
-              }
-          }
-          //console.log("char count: "+charCounter);
-          currentWordWidth = 0;
-          for(var z=0; z<charCounter; z++){
-            var currentCh = text[i+z];
-            currentWordWidth += ctx.measureText(currentCh).width;
-          }
-          if(currentWordWidth>=canvasWidth){
-            currentWordWidth=0; //allow very large words to pass the break
-          }
-          
-          //stop animation
-          if (i >= text.length || y > (canvasHeight*1.1)){
-            console.log("stop animation");
-            clearInterval(animationInterval);
-            playAnimationToggle = false;
+        ctx.strokeText(ch, x, y); // stroke letter
 
-            if(recordVideoState == true){
-                console.log("stop video record");
-                setTimeout(chooseEndRecordingFunction,4000);
+        if (dashOffset <= 0){ //once letter stroke is finished, move to next char
+
+            speed = Number(speedInput.value)/100 * initialDashLen/1.5; //reset speed back to initial value
+
+            if(fillLetterToggle){
+                ctx.fillText(ch, x, y);    // fill final letter
             }
-          }
+
+            var posOrNeg;
+            if(Math.random()<0.5){
+                posOrNeg = -1;
+            }else{
+                posOrNeg = 1;
+            }
+            
+            x += chWidth + ctx.lineWidth + (randomXDelta * Math.random())*posOrNeg; //random x-delta
+            i++; //go to next char
+            ch = text[i];
+            ctx.setTransform(1, 0, 0, 1, 0, Math.random() * randomYDelta);        // random y-delta
+            ctx.rotate(Math.random() * randomRotation);                         // random rotation
+            
+            if((ch == ' ') || (ch == '\t') || (ch == '\n')){
+                dashOffset = dashLen/2;   //small pause if whitespace
+            } else {
+                dashOffset = dashLen;   // prep next char
+            }
+
+            /*
+            var charCounter = 0;
+            //find width of current word
+            for(var j=i; j<text.length; j++){
+                
+                if(text[j] == ' '){
+                    break;
+                } else {
+                    charCounter++;
+                }
+            }
+            //console.log("char count: "+charCounter);
+            currentWordWidth = 0;
+            for(var z=0; z<charCounter; z++){
+                var currentCh = text[i+z];
+                currentWordWidth += ctx.measureText(currentCh).width;
+            }
+            if(currentWordWidth>=canvasWidth){
+                currentWordWidth=0; //allow very large words to pass the break
+            }
+            */
+            
+            //stop animation
+            if (i >= text.length || y > (canvasHeight*1.1)){
+                console.log("stop animation");
+                clearInterval(animationInterval);
+                playAnimationToggle = false;
+
+                if(recordVideoState == true){
+                    console.log("stop video record");
+                    setTimeout(chooseEndRecordingFunction,4000);
+                }
+            }
 
         }
     }
@@ -724,6 +784,83 @@ function recordWhitespaces(text){
         }
     }
     return whitespacePositions;
+}
+
+function cleanText(oldText){
+    var newText = "";
+    var oldNumChars = oldText.length;
+
+    //replace tab and new line with whitespace instead
+    for(var i=0; i<oldNumChars; i++){
+        var currentChar = '';
+        if(oldText[i] == '\n' || oldText[i] == '\t'){
+            currentChar = ' ';
+        } else {
+            currentChar = oldText[i];
+        }
+
+        newText = newText + currentChar;
+    }
+
+    return newText;
+}
+
+function getTextMetrics(userText){
+    numChars = userText.length;
+    numWords = 0;
+    wordLengthArray = [];
+    wordStartPositionArray = [];
+    var currentWordLength = 0;
+    var previousChar;
+
+
+    for(var i=0; i<numChars; i++){
+        var currentChar = userText[i];
+        if(currentChar == ' '){
+            if(i==0){
+                //first char is whitespace
+                break;
+            } else {
+                previousChar = userText[i-1];
+                if(previousChar != ' '){
+                    //found the end of a word
+                    wordLengthArray[numWords-1] = currentWordLength;
+                    currentWordLength = 0;
+                }
+            }
+        }
+        
+        if(currentChar != ' '){
+            currentWordLength++;
+            if(i==0){
+                //found the start of a word;
+                numWords++;
+                wordStartPositionArray[numWords-1] = i;
+            } else {
+                
+                previousChar = userText[i-1];
+                
+                if(previousChar != ' '){
+                    //found the continuation of a word
+                    if(i==(numChars-1)){
+                        //found the end of a word given it is the end of the sentence
+                        wordLengthArray[numWords-1] = currentWordLength;
+                        currentWordLength = 0;
+                    }
+                } else {
+                    //found the start of a word;
+                    numWords++;
+                    wordStartPositionArray[numWords-1] = i;
+                }
+            }
+
+        }
+    }
+
+    console.log("numWords: "+numWords);
+    console.log("word length array: "+wordLengthArray);
+    console.log("word start position array: "+wordStartPositionArray);
+
 }
 
 /*
