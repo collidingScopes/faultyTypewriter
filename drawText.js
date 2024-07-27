@@ -5,14 +5,11 @@ Randomize inputs function
 Gif export
 Add other fonts from google fonts
 Font for different languages?
-site OG properties
 Better hotkey method (user will be typing alot)
 Movie posters / famous quotes -- Blade Runner, wong kar wai, etc.
 Organize options in basic options / funky options -- auto-hide funky options
 Button to choose lock aspect ratio when changing canvas dimensions
-Reduce file size of background image (doesn't load sometimes)
 Force stroke to finish even on high speed?
-Add example text (short / long quotes), and some example outputs
 Can background be a generative animation? This would require a background canvas/foreground?
 Mobile issues:
 - input table too wide (shrink input image button)
@@ -277,8 +274,8 @@ function refresh(){
 canvasWidthInput.value = Math.floor(window.innerWidth);
 canvasHeightInput.value = Math.floor(window.innerHeight/2);
 fontSizeInput.value = Math.floor(Math.min(100,window.innerWidth/12));
-setTimeout(getUserInputs,200);
-setTimeout(drawText,1800); //wait for fonts to load
+setTimeout(getUserInputs,1800);
+setTimeout(drawText,2200); //wait for fonts to load
 
 function drawText(){
 
