@@ -242,7 +242,7 @@ button {
 
 .tableText{
     font-weight: bold;
-    font-size: 14px;
+    font-size: 0.7em;
     font-family: Helvetica;
     color:white;
 }
@@ -254,7 +254,7 @@ pre {
 /* applies when screen is wide enough */ 
 @media (min-width: 700px) {
     button, .tableText {
-      font-size: 14px;
+      font-size: 0.9em;
     }
 }
 

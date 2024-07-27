@@ -3,7 +3,7 @@ Pause/play animation button?
 Allow video background. Need to draw video behind the canvas and then mux??
 Randomize inputs function
 Gif export
-Add other fonts from google fonts
+Curate fonts -- delete some and add other fonts from google fonts
 Font for different languages?
 Better hotkey method (user will be typing alot)
 Movie posters / famous quotes -- Blade Runner, wong kar wai, etc.
