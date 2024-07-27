@@ -2,6 +2,10 @@ An open source project to create text animations and poster art. The animation i
 
 Live website: https://collidingscopes.github.io/faultyTypewriter
 
+Type some text, then drag the sliders to adjust the font, speed, colors, waviness, randomness, etc...
+
+You can also upload your own background image to create animated posters.
+
 Built using javascript, HTML, CSS.
 
 Enormous thanks and credits to <a href="https://stackoverflow.com/questions/29911143/how-can-i-animate-the-drawing-of-text-on-a-web-page" target="_blank" rel="noopener">user1693593 from StackOverflow</a>, who provided the initial code to create this effect.
