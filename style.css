@@ -103,6 +103,7 @@ h2 {
     max-width: 70vw;
     margin: 0 auto;
     padding: 0;
+    display: block;
 }
 
 /* user input styling */
